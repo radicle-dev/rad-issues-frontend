@@ -4,9 +4,9 @@ import Comment from './components/Comment';
 import { colors } from './utils';
 
 // Get outputs of a chain.
-const getOutputsByChain = (chain, onSuccess, onError) => {
+const getOutputsByChain = (root, chain, onSuccess, onError) => {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/outputs/' + encodeURIComponent(chain) + '', true);
+    xhr.open('GET', root + '/outputs/' + encodeURIComponent(chain) + '', true);
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.onreadystatechange = function () {
         var res = null;
@@ -14,7 +14,7 @@ const getOutputsByChain = (chain, onSuccess, onError) => {
             if (xhr.status === 204 || xhr.status === 205) {
                 onSuccess();
             } else if (xhr.status >= 200 && xhr.status < 300) {
-                try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
+                try {res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
                 if (res) onSuccess(res);
             } else {
                 try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
@@ -25,29 +25,36 @@ const getOutputsByChain = (chain, onSuccess, onError) => {
     xhr.send(null);
 };
 
-//
+const transformInput = (inp) => {
+    if (inp != null && inp.hasOwnProperty("comment")) {
+        return inp;
+    } else {
+        return {pre: inp};
+    }
+};
 
 export default class App extends Component {
 
-  state = { comments: [], error: null };
+  state = { outputs: [], error: null };
 
   componentDidMount() {
-    var getOuts = () => {
-      getOutputsByChain(
-        "issues",
-        d => this.setState({comments: d}),
-        err => this.setState({error: err})
-      );
-    };
-    setInterval(getOuts, 1000);
+      var getOuts = () => {
+          getOutputsByChain(
+              "http://localhost:8000",
+              "issue",
+              d => { this.setState({outputs: d.map(transformInput)}); },
+              err => { this.setState({error: err}); }
+          );
+      };
+      setInterval(getOuts, 1000);
   }
 
   render() {
-    const {comments} = this.state;
+    const {outputs} = this.state;
     return (
       <Container>
-        <Title>Radicle issues</Title>
-        {comments.filter(i => i.hasOwnProperty("issue_id")).map(comment => <Comment {...comment} />)}
+        <Title>Issue Foo</Title>
+            {outputs.map(comment => <Comment {...comment} />)}
       </Container>
     );
   }
