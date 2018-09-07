@@ -1,38 +1,24 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import Timestamp from 'react-timestamp';
 import { colors } from '../utils';
 
-const Comment = props => {
-    if (props.hasOwnProperty("comment")) {
-            return <Fragment>
-              <Header>
-                <ProfileImg src={props.profile_pic_url} alt="profile" />
-                <p><User>{props.username}</User></p>
-              </Header>
-              <Content>
-                <p>{props.comment}</p>
-              </Content>
-            </Fragment>
-    } else { return <Out>{JSON.stringify(props.pre)}</Out>; }
-};
-
-export default Comment;
-
-const Out = styled.pre`
-  font-family: monospace;
-  border: 1px ${colors.lightGrey} solid;
-  border-radius: 0px;
-  padding: 24px;
-  margin-top: 8px;
-  opacity: 0.70;
-`
+export default ({profile_pic_url, username, comment}) => (
+  <Fragment>
+    <Header>
+      <ProfileImg src={profile_pic_url} alt="profile" />
+      <p><User>{username}</User></p>
+    </Header>
+    <Content>
+      <p>{comment}</p>
+    </Content>
+  </Fragment>
+);
 
 const ProfileImg = styled.img`
   height: 36px;
   width: 36px;
   border-radius: 4px;
-  margin-right: 24px;
+  margin-right: 12px;
   `
 
 const Header = styled.div`
@@ -53,7 +39,7 @@ const Content = styled.div`
   border: 1px ${colors.lightGrey} solid;
   border-radius: 4px;
   padding: 24px;
-  margin-left: 60px;
+  margin-left: 48px;
   margin-bottom: 12px;
   margin-top: 12px;
 `

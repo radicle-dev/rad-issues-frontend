@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Comment from './components/Comment';
+import Output from './components/Output';
 import { colors } from './utils';
 
 // Get outputs of a chain.
@@ -54,7 +55,7 @@ export default class App extends Component {
     return (
       <Container>
         <Title>Issue Foo</Title>
-            {outputs.map(comment => <Comment {...comment} />)}
+          {outputs.map(comment => comment.comment ? <Comment {...comment} /> : <Output string={comment.pre}/>)}
       </Container>
     );
   }
@@ -73,20 +74,3 @@ const Title = styled.h1`
   margin-bottom: 48px;
   font-size: 24px;
 `
-
-
-
-// const COMMENTS = [
-//   {
-//     profile_pic_url: "http://res.cloudinary.com/juliendonck/image/upload/v1505469081/Artboard_Copy_ufej5j.png",
-//     username: "Julien",
-//     time: 1535644080,
-//     comment: "that looks even better"
-//   },
-//   {
-//     profile_pic_url: "http://res.cloudinary.com/juliendonck/image/upload/v1505469081/Artboard_Copy_ufej5j.png",
-//     username: "james",
-//     time: 1535643000,
-//     comment: "That looks really good to me"
-//   },
-// ]
