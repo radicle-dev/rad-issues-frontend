@@ -6,10 +6,10 @@ import { colors } from '../utils';
 export default ({string}) => (
   <Fragment>
     <Output>
-    <Icon width="36" height="36" viewBox="0 0 36 36" fill="none">
-      <rect width="36" height="36" rx="4" fill="#6E41E0"/>
-      <circle cx="18" cy="18" r="12.5" stroke="white" stroke-width="2"/>
-    </Icon>
+      <Icon width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" rx="4" fill="#6E41E0"/>
+        <circle cx="18" cy="18" r="12.5" stroke="white" stroke-width="2"/>
+      </Icon>
       <PrintOut>{string}</PrintOut>
     </Output>
   </Fragment>
@@ -19,13 +19,13 @@ const Icon = styled.svg`
   height: 36px;
   width: 36px;
   margin-right: 12px;
+  min-width: 36px;
   `
 
 const Output = styled.div`
   display: flex;
   flex-direction: row;
-  height: 36px;
-  align-items: center;
+  align-items: start;
   color: ${colors.darkGrey};
   margin-bottom: 16px;
   margin-top: 24px;
@@ -38,4 +38,6 @@ const PrintOut = styled.pre`
   white-space: -o-pre-wrap;
   white-space: pre-wrap;
   word-wrap: break-word;
+  padding-top: 12px;
+
 `
