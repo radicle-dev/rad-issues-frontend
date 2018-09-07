@@ -40,8 +40,8 @@ export default class App extends Component {
   componentDidMount() {
       var getOuts = () => {
           getOutputsByChain(
-              "http://localhost:8000",
-              "issue",
+              "http://radicle.xyz",
+              "issue54",
               d => { this.setState({outputs: d.map(transformInput)}); },
               err => { this.setState({error: err}); }
           );
