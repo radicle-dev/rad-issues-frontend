@@ -38,6 +38,6 @@ const PrintOut = styled.pre`
   white-space: -o-pre-wrap;
   white-space: pre-wrap;
   word-wrap: break-word;
-  padding-top: 12px;
+  padding-top: 10px;
 
 `

@@ -55,7 +55,7 @@ export default class App extends Component {
     return (
       <Container>
         <Title>Issue Foo</Title>
-          {outputs.map(comment => comment.comment ? <Comment {...comment} /> : <Output string={comment.pre}/>)}
+          {outputs.map(comment => comment.comment ? <Comment {...comment} /> : (comment.pre.length == 0 ? <Output string={"[]"}/>: <Output string={comment.pre}/>))}
       </Container>
     );
   }
