@@ -10,7 +10,7 @@ export default ({string}) => (
       <rect width="36" height="36" rx="4" fill="#6E41E0"/>
       <circle cx="18" cy="18" r="12.5" stroke="white" stroke-width="2"/>
     </Icon>
-      <PrintOut>{JSON.stringify(string)}</PrintOut>
+      <PrintOut>{string}</PrintOut>
     </Output>
   </Fragment>
 );
@@ -31,7 +31,11 @@ const Output = styled.div`
   margin-top: 24px;
 `
 
-const PrintOut = styled.p`
+const PrintOut = styled.pre`
   color: ${colors.black};
   font-family: monospace;
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 `
