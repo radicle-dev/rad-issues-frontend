@@ -3,60 +3,49 @@ import styled from 'styled-components';
 import Comment from './components/Comment';
 import Output from './components/Output';
 import { colors } from './utils';
-
-// Get outputs of a chain.
-const getOutputsByChain = (root, chain, onSuccess, onError) => {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', root + '/outputs/' + encodeURIComponent(chain) + '', true);
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onreadystatechange = function () {
-        var res = null;
-        if (xhr.readyState === 4) {
-            if (xhr.status === 204 || xhr.status === 205) {
-                onSuccess();
-            } else if (xhr.status >= 200 && xhr.status < 300) {
-                try {res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
-                if (res) onSuccess(res);
-            } else {
-                try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
-                if (res) onError(res);
-            }
-        }
-    };
-    xhr.send(null);
-};
-
-const transformInput = (inp) => {
-    if (inp != null && inp.hasOwnProperty("comment")) {
-        return inp;
-    } else {
-        return {pre: inp};
-    }
-};
+import request from "request";
+import ReactMarkdown from "react-markdown";
 
 export default class App extends Component {
 
-  state = { outputs: [], error: null };
+  state = {issues: {}, error: null };
 
   componentDidMount() {
       var getOuts = () => {
-          getOutputsByChain(
-              "http://radicle.xyz",
-              "issue54",
-              d => { this.setState({outputs: d.map(transformInput)}); },
-              err => { this.setState({error: err}); }
-          );
+          console.log("getting outputs..");
+          request(
+              { uri: "http://localhost:8909/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query",
+                method: 'POST',
+                json: "(list-issues)",
+                headers: {"Content-Type": "application/json",
+                          "Accept": "application/radicle-json"}
+              }
+              , (error, response, body) => {
+                  console.log(body);
+                  if (error) {
+                      this.setState({error: error});
+                  } else {
+                      this.setState({issues: body});
+                  }
+              }
+          )
       };
-      setInterval(getOuts, 1000);
+      setInterval(getOuts, 5000);
   }
 
   render() {
-    const {outputs} = this.state;
-    return (
-      <Container>
-        <Title>Issue Foo</Title>
-          {outputs.map(comment => comment.comment ? <Comment {...comment} /> : (comment.pre.length == 0 ? <Output string={"[]"}/>: <Output string={comment.pre}/>))}
-      </Container>
+    const {issues} = this.state;
+      return (
+          Object.entries(issues).map(([n, i]) =>
+              <Container key={n}>
+                  <Title>{i.title}</Title>
+                  <ReactMarkdown source={i.body}/>
+                  {i.comments.map((c) => <Comment {...c}/>)}
+              </Container>)
+      // <Container>
+      //   <Title>Issue Foo</Title>
+      //       {issues.entries().map(issue => comment.comment ? <Comment {...comment} /> : (comment.pre.length === 0 ? <Output string={"[]"}/>: <Output string={comment.pre}/>))}
+      // </Container>
     );
   }
 }

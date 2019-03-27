@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { colors } from '../utils';
+import ReactMarkdown from "react-markdown";
 
-export default ({profile_pic_url, username, comment}) => (
+export default ({username, body}) => (
   <Fragment>
     <Header>
-      <ProfileImg src={profile_pic_url} alt="profile" />
       <p><User>{username}</User></p>
     </Header>
     <Content>
-      <p>{comment}</p>
+        <ReactMarkdown source={body}/>
     </Content>
   </Fragment>
 );
