@@ -12,20 +12,20 @@ export default class App extends Component {
 
   componentDidMount() {
       var getOuts = () => {
-          console.log("getting outputs..");
           request(
-              { uri: "http://localhost:8909/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query",
+              { uri: "http://replicate.machines.radicle.xyz/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query",
                 method: 'POST',
-                json: "(list-issues)",
+                json: {expression: "(list-issues)"},
                 headers: {"Content-Type": "application/json",
                           "Accept": "application/radicle-json"}
               }
               , (error, response, body) => {
-                  console.log(body);
                   if (error) {
-                      this.setState({error: error});
+                      this.setState({error: error}); 
+                  } else if (body.error) {
+                      this.setState({error: body.error});
                   } else {
-                      this.setState({issues: body});
+                      this.setState({issues: body.result});
                   }
               }
           )
@@ -34,7 +34,7 @@ export default class App extends Component {
   }
 
   render() {
-    const {issues} = this.state;
+      const {issues} = this.state;
       return (
           Object.entries(issues).map(([n, i]) =>
               <Container key={n}>
