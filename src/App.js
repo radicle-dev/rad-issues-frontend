@@ -38,7 +38,7 @@ export default class App extends Component {
       return (
           Object.entries(issues).map(([n, i]) =>
               <Container key={n}>
-                  <Title>{i.title}</Title>
+                  <Title>#{n} - {i.title}</Title>
                   <ReactMarkdown source={i.body}/>
                   {i.comments.map((c) => <Comment {...c}/>)}
               </Container>)
