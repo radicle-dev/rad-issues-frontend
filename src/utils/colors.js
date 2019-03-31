@@ -1,34 +1,27 @@
-export const black = '#28333D';
-export const darkGrey = '#546474';
-export const grey = '#90A0AF';
+export const blue = '#5555ff';
+export const green = '#55ff55';
+export const cyan = '#55ffff';
+export const red = '#ff5555';
+export const magenta = '#ff55ff';
+export const yellow = '#ffff55';
+export const white = '#ffffff';
+export const almostWhite = '#F2F2F2';
 export const lightGrey = '#CED8E1';
-export const almostWhite = '#F8F8F8';
-export const white = '#fff';
-export const blue = '#6E41E0';
-export const lightBlue = '#1F91CC';
-export const lighterBlue = '#999FF0';
-export const teal = '#51E2F5';
-export const green = '#20D479';
-export const lightGreen = '#24F38B';
-export const yellow = '#E3ED11';
-export const orange = '#F5BF36';
-export const pink = '#E074CB';
-export const red = '#BF456B';
+export const grey = '#90A0AF';
+export const darkGrey = '#546474';
+export const black = '#000000';
 
 export default {
-  black,
-  darkGrey,
-  grey,
-  lightGrey,
-  almostWhite,
-  white,blue,
-  lightBlue,
-  lighterBlue,
-  teal,
+  blue,
   green,
-  lightGreen,
-  yellow,
-  orange,
-  pink,
+  cyan,
   red,
+  magenta,
+  yellow,
+  white,
+  almostWhite,
+  lightGrey,
+  grey,
+  darkGrey,
+  black
 };
