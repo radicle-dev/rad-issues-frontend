@@ -10,11 +10,12 @@ import Filter from './components/Filter';
 
 export default class App extends Component {
   state = {
+    error: null,
     filter: {
+      search: '',
       state: 'open',
     },
     issues: {},
-    error: null
   };
 
   componentDidMount() {
@@ -48,7 +49,7 @@ export default class App extends Component {
       );
     };
 
-    timer = setTimeout(getOuts, 0);
+    getOuts();
   }
 
   render() {
@@ -59,7 +60,11 @@ export default class App extends Component {
         <Header>
           <h1>Radicle issues</h1>
           <Controls>
-            <Filter value="Filter" />
+            <Filter onChange={(e) => {
+              filter.search = e.target.value;
+
+              this.setState({ filter: filter });
+            }} placeholder="Filter" value={filter.search} />
             <Picker marginLeft active={filter.state} items={['open', 'closed']} pickItem={(state) => {
               filter.state = state;
 
@@ -69,6 +74,13 @@ export default class App extends Component {
         </Header>
         {Object.entries(issues)
           .filter(([number, issue]) => issue.state === filter.state)
+          .filter(([_, issue]) => {
+            let search = filter.search.toLowerCase();
+
+            return issue.body.toLowerCase().includes(search) ||
+              issue["git-username"].toLowerCase().includes(search) ||
+              issue.title.toLowerCase().includes(search);
+          })
           // .sort((a, b) => a["created-at"] < b["created-at"])
           .map(([number, issue]) => (
             <IssueContainer key={number}>
