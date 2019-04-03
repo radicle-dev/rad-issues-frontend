@@ -76,7 +76,7 @@ export default class App extends Component {
                 <Title>
                   #{number} - {issue.title}
                 </Title>
-                <State pass={issue.state === 'open'}>{issue.state}</State>
+                <State open={issue.state === 'open'}>{issue.state}</State>
               </TitleContainer>
               <Meta>
                 opened <Timestamp time={issue['created-at']} /> by {issue['git-username']}
@@ -91,7 +91,7 @@ export default class App extends Component {
             </IssueContainer>
           ))}
         <LogoContainer>
-          <p>Powered by</p>
+          <p>Built with</p>
           <Logo href="http://radicle.xyz" target="_blank">
             <RadLogo />
           </Logo>
@@ -155,8 +155,8 @@ const Title = styled.h3`
 `;
 
 const State = styled.span`
-  ${({ pass }) =>
-    pass
+  ${({ open }) =>
+    open
       ? `
       color: ${colors.black};
       background-color: ${colors.green};
