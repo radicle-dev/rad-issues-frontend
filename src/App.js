@@ -1,42 +1,52 @@
 import React, { Component, Fragment } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Timestamp from 'react-timestamp';
+import { colors } from 'styles';
+import request from 'request';
+import ReactMarkdown from 'react-markdown';
 import Comment from './components/Comment';
 import Picker from './components/Picker';
 import Filter from './components/Filter';
-import { colors } from 'styles';
-import request from "request";
-import ReactMarkdown from "react-markdown";
 
 export default class App extends Component {
-
-  state = {issues: {}, error: null };
+  state = { issues: {}, error: null };
 
   componentDidMount() {
-    var getOuts = () => {
+    let timer;
+
+    const getOuts = () => {
+      clearInterval(timer);
+
       request(
-        { uri: "http://replicate.machines.radicle.xyz/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query",
+        {
+          uri:
+            'http://replicate.machines.radicle.xyz/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query',
           method: 'POST',
-          json: {expression: "(list-issues)"},
-          headers: {"Content-Type": "application/json",
-                    "Accept": "application/radicle-json"}
-        }
-        , (error, response, body) => {
+          json: { expression: '(list-issues)' },
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/radicle-json',
+          },
+        },
+        (error, response, body) => {
           if (error) {
-            this.setState({error: error});
+            this.setState({ error });
           } else if (body.error) {
-            this.setState({error: body.error});
+            this.setState({ error: body.error });
           } else {
-            this.setState({issues: body.result});
+            this.setState({ issues: body.result });
           }
+
+          timer = setTimeout(getOuts, 5000);
         }
-      )
+      );
     };
-    setInterval(getOuts, 5000);
+
+    timer = setTimeout(getOuts, 0);
   }
 
   render() {
-    const {issues} = this.state;
+    const { issues } = this.state;
 
     return (
       <Fragment>
@@ -47,28 +57,29 @@ export default class App extends Component {
             <Picker marginLeft items={['open', 'closed']} />
           </Controls>
         </Header>
-        {
-          Object.entries(issues)
-            // .filter(([number, issue]) => issue.state === "open")
-            // .sort((a, b) => a["created-at"] < b["created-at"])
-            .map(([number, issue]) =>
+        {Object.entries(issues)
+          // .filter(([number, issue]) => issue.state === "open")
+          // .sort((a, b) => a["created-at"] < b["created-at"])
+          .map(([number, issue]) => (
             <IssueContainer key={number}>
               <TitleContainer>
-                <Title>#{number} - {issue.title}</Title><State pass={issue.state === "open"} >{issue.state}</State>
+                <Title>
+                  #{number} - {issue.title}
+                </Title>
+                <State pass={issue.state === 'open'}>{issue.state}</State>
               </TitleContainer>
               <Meta>
-                opened <Timestamp time={issue["created-at"]} /> by {issue["git-username"]}
+                opened <Timestamp time={issue['created-at']} /> by {issue['git-username']}
               </Meta>
               <Divider />
               <ContentContainer>
                 <Body>
-                  <ReactMarkdown source={issue.body}/>
+                  <ReactMarkdown source={issue.body} />
                 </Body>
-                {issue.comments && issue.comments.map((comment) => <Comment {...comment}/>)}
+                {issue.comments && issue.comments.map(comment => <Comment {...comment} />)}
               </ContentContainer>
             </IssueContainer>
-          )
-        }
+          ))}
         <LogoContainer>
           <p>powered by</p>
           <Logo />
@@ -92,20 +103,20 @@ const Header = styled.div`
     font-weight: bold;
     padding-top: 8px;
   }
-`
+`;
 const IssueContainer = styled.div`
   background-color: ${colors.white};
   margin-bottom: 24px;
   border-radius: 4px;
-`
+`;
 
 const Controls = styled.div`
   display: flex;
   flex-direction: row;
-`
+`;
 const ContentContainer = styled.div`
   padding: 24px;
-`
+`;
 
 const Body = styled.div`
   line-height: 1.5;
@@ -116,10 +127,9 @@ const Body = styled.div`
     padding: 2px 4px;
   }
   li {
-    list-style-type:disc;
+    list-style-type: disc;
   }
-`
-
+`;
 
 const TitleContainer = styled.div`
   display: flex;
@@ -127,10 +137,10 @@ const TitleContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 24px 24px 8px 24px;
-`
+`;
 const Title = styled.h3`
   font-weight: bold;
-`
+`;
 
 const State = styled.span`
   ${({ pass }) =>
@@ -147,37 +157,33 @@ const State = styled.span`
   border-radius: 4px;
   padding: 6px 8px 4px 8px;
   margin-left: 8px;
-`
+`;
 const Meta = styled.div`
   padding: 0 24px 24px 24px;
   color: ${colors.darkGrey};
-`
+`;
 const Divider = styled.div`
   height: 1px;
   width: 100%;
   background-color: ${colors.lightGrey};
-`
+`;
 
 const LogoContainer = styled.div`
   height: 200px;
   width: 100%;
   align-items: center;
   justify-items: center;
-`
+`;
 
 const Logo = styled.a`
   width: 106px;
   height: 24px;
-  background-image: url("./img/rad-logo.svg");
+  background-image: url('./img/rad-logo.svg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   cursor: pointer;
-`
-
-
-
-
+`;
 
 const GlobalStyle = createGlobalStyle`
 /* reset.css */
