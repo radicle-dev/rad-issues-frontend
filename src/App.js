@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Timestamp from 'react-timestamp';
-import { colors } from 'styles';
+import { colors, RadLogo } from 'styles';
 import request from 'request';
 import ReactMarkdown from 'react-markdown';
 import Comment from './components/Comment';
@@ -81,8 +81,10 @@ export default class App extends Component {
             </IssueContainer>
           ))}
         <LogoContainer>
-          <p>powered by</p>
-          <Logo />
+          <p>Powered by</p>
+          <Logo href="http://radicle.xyz" target="_blank">
+            <RadLogo />
+          </Logo>
         </LogoContainer>
         <GlobalStyle />
       </Fragment>
@@ -169,19 +171,22 @@ const Divider = styled.div`
 `;
 
 const LogoContainer = styled.div`
-  height: 200px;
+  height: 160px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
+  p {
+    color: ${colors.grey};
+    padding-bottom: 8px;
+  }
+  padding-bottom: 24px;
 `;
 
 const Logo = styled.a`
   width: 106px;
   height: 24px;
-  background-image: url('./img/rad-logo.svg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
   cursor: pointer;
 `;
 
