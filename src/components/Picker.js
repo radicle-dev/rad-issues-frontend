@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { colors } from 'styles';
 
-const Picker = ({ items, marginLeft, marginRight }) => (
+const Picker = ({ active, items, marginLeft, marginRight, pickItem }) => (
   <PickerContainer marginLeft={marginLeft} marginRight={marginRight}>
     {items.map((item, index) => (
-      <Item active={index === 0} key={item}>
+      <Item active={item === active} key={item} onClick={() => pickItem(item)}>
         {item}
       </Item>
     ))}
@@ -14,14 +14,18 @@ const Picker = ({ items, marginLeft, marginRight }) => (
 );
 
 Picker.defaultProps = {
+  active: 'item 1',
   items: ['item 1', 'item 2'],
   marginLeft: false,
   marginRight: false,
+  pickItem: () => {},
 };
 Picker.propTypes = {
+  active: PropTypes.string,
   items: PropTypes.array,
   marginLeft: PropTypes.bool,
   marginRight: PropTypes.bool,
+  pickItem: PropTypes.func,
 };
 
 const PickerContainer = styled.div`
@@ -40,11 +44,11 @@ const PickerContainer = styled.div`
     margin-left: 16px;
   `};
 `;
-const Item = styled.p`
+const Item = styled.button`
   height: 36px;
   color: ${colors.darkGrey};
+  cursor: pointer;
   padding: 10px 16px;
-  border-right: 1px solid ${colors.lightGrey};
   ${({ active }) =>
     active &&
     `
@@ -57,9 +61,9 @@ const Item = styled.p`
     border-right: none;
   }
   &:last-child {
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    border-right: none;
+    border-left: none;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
   }
 `;
 export default Picker;

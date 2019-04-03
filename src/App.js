@@ -9,7 +9,13 @@ import Picker from './components/Picker';
 import Filter from './components/Filter';
 
 export default class App extends Component {
-  state = { issues: {}, error: null };
+  state = {
+    filter: {
+      state: 'open',
+    },
+    issues: {},
+    error: null
+  };
 
   componentDidMount() {
     let timer;
@@ -24,11 +30,11 @@ export default class App extends Component {
           method: 'POST',
           json: { expression: '(list-issues)' },
           headers: {
-            'Content-Type': 'application/json',
             Accept: 'application/radicle-json',
+            'Content-Type': 'application/json',
           },
         },
-        (error, response, body) => {
+        (error, _, body) => {
           if (error) {
             this.setState({ error });
           } else if (body.error) {
@@ -46,7 +52,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { issues } = this.state;
+    const { filter, issues } = this.state;
 
     return (
       <Fragment>
@@ -54,11 +60,15 @@ export default class App extends Component {
           <h1>Radicle issues</h1>
           <Controls>
             <Filter value="Filter" />
-            <Picker marginLeft items={['open', 'closed']} />
+            <Picker marginLeft active={filter.state} items={['open', 'closed']} pickItem={(state) => {
+              filter.state = state;
+
+              this.setState({ filter: filter });
+            }} />
           </Controls>
         </Header>
         {Object.entries(issues)
-          // .filter(([number, issue]) => issue.state === "open")
+          .filter(([number, issue]) => issue.state === filter.state)
           // .sort((a, b) => a["created-at"] < b["created-at"])
           .map(([number, issue]) => (
             <IssueContainer key={number}>
