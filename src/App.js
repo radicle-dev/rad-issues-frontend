@@ -79,6 +79,7 @@ export default class App extends Component {
 
             return issue.body.toLowerCase().includes(search) ||
               issue["git-username"].toLowerCase().includes(search) ||
+              issue.number.toString().includes(search) ||
               issue.title.toLowerCase().includes(search);
           })
           // .sort((a, b) => a["created-at"] < b["created-at"])
