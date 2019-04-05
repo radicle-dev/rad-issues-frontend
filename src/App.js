@@ -18,38 +18,32 @@ export default class App extends Component {
     issues: {},
   };
 
-  componentDidMount() {
-    let timer;
-
-    const getOuts = () => {
-      clearInterval(timer);
-
-      request(
-        {
-          uri:
-            'http://replicate.machines.radicle.xyz/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query',
-          method: 'POST',
-          json: { expression: '(list-issues)' },
-          headers: {
-            Accept: 'application/radicle-json',
-            'Content-Type': 'application/json',
-          },
+  getIssues() {
+    request(
+      {
+        uri:
+          'http://replicate.machines.radicle.xyz/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query',
+        method: 'POST',
+        json: { expression: '(list-issues)' },
+        headers: {
+          Accept: 'application/radicle-json',
+          'Content-Type': 'application/json',
         },
-        (error, _, body) => {
-          if (error) {
-            this.setState({ error });
-          } else if (body.error) {
-            this.setState({ error: body.error });
-          } else {
-            this.setState({ issues: body.result });
-          }
-
-          timer = setTimeout(getOuts, 5000);
+      },
+      (error, _, body) => {
+        if (error) {
+          this.setState({ error });
+        } else if (body.error) {
+          this.setState({ error: body.error });
+        } else {
+          this.setState({ issues: body.result });
         }
-      );
-    };
+      }
+    );
+  }
 
-    getOuts();
+  componentDidMount() {
+    this.getIssues();
   }
 
   render() {
@@ -60,6 +54,7 @@ export default class App extends Component {
         <Header>
           <h1>Radicle issues</h1>
           <Controls>
+            <RefreshButton onClick={(e) => {this.getIssues();}}>Refresh</RefreshButton>
             <Filter onChange={(e) => {
               filter.search = e.target.value;
 
@@ -211,6 +206,10 @@ const Logo = styled.a`
   width: 106px;
   height: 24px;
   cursor: pointer;
+`;
+
+const RefreshButton = styled.button`
+  margin: 0 16px;
 `;
 
 const GlobalStyle = createGlobalStyle`
