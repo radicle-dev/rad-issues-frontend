@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Timestamp from 'react-timestamp';
-import { colors, RadLogo } from 'styles';
 import request from 'request';
 import ReactMarkdown from 'react-markdown';
+import { colors, RadLogo } from 'styles';
 import Comment from './components/Comment';
 import Picker from './components/Picker';
 import Filter from './components/Filter';
@@ -17,6 +17,10 @@ export default class App extends Component {
     },
     issues: {},
   };
+
+  componentDidMount() {
+    this.getIssues();
+  }
 
   getIssues() {
     request(
@@ -42,10 +46,6 @@ export default class App extends Component {
     );
   }
 
-  componentDidMount() {
-    this.getIssues();
-  }
-
   render() {
     const { filter, issues } = this.state;
 
@@ -54,28 +54,45 @@ export default class App extends Component {
         <Header>
           <h1>Radicle issues</h1>
           <Controls>
-            <RefreshButton onClick={(e) => {this.getIssues();}}>Refresh</RefreshButton>
-            <Filter onChange={(e) => {
-              filter.search = e.target.value;
+            <RefreshButton
+              onClick={e => {
+                this.getIssues();
+              }}
+            >
+              Refresh
+            </RefreshButton>
+            <Filter
+              onChange={e => {
+                filter.search = e.target.value;
 
-              this.setState({ filter: filter });
-            }} placeholder="Filter" value={filter.search} />
-            <Picker marginLeft active={filter.state} items={['open', 'closed']} pickItem={(state) => {
-              filter.state = state;
+                this.setState({ filter });
+              }}
+              placeholder="Filter"
+              value={filter.search}
+            />
+            <Picker
+              marginLeft
+              active={filter.state}
+              items={['open', 'closed']}
+              pickItem={state => {
+                filter.state = state;
 
-              this.setState({ filter: filter });
-            }} />
+                this.setState({ filter });
+              }}
+            />
           </Controls>
         </Header>
         {Object.entries(issues)
           .filter(([number, issue]) => issue.state === filter.state)
           .filter(([_, issue]) => {
-            let search = filter.search.toLowerCase();
+            const search = filter.search.toLowerCase();
 
-            return issue.body.toLowerCase().includes(search) ||
-              issue["git-username"].toLowerCase().includes(search) ||
+            return (
+              issue.body.toLowerCase().includes(search) ||
+              issue['git-username'].toLowerCase().includes(search) ||
               issue.number.toString().includes(search) ||
-              issue.title.toLowerCase().includes(search);
+              issue.title.toLowerCase().includes(search)
+            );
           })
           // .sort((a, b) => a["created-at"] < b["created-at"])
           .map(([number, issue]) => (
@@ -210,6 +227,14 @@ const Logo = styled.a`
 
 const RefreshButton = styled.button`
   margin: 0 16px;
+  cursor: pointer;
+  color: ${colors.blue};
+  &:hover {
+    text-decoration: underline;
+  }
+  &:active {
+    opacity: 0.8;
+  }
 `;
 
 const GlobalStyle = createGlobalStyle`
