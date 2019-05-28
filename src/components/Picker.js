@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { colors } from 'styles';
+import { colors } from '../styles';
 
 const Picker = ({ active, items, marginLeft, marginRight, pickItem }) => (
   <PickerContainer marginLeft={marginLeft} marginRight={marginRight}>

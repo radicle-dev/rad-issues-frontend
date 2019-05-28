@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { colors } from 'styles';
+import { colors } from '../styles';
 import Timestamp from 'react-timestamp';
 import ReactMarkdown from "react-markdown";
 
-export default ({'git-username': username, body, 'created-at': createdAt}) => (
+export default ({':git-username': username, ':body': body, ':created-at': createdAt}) => (
   <Fragment>
     <Header>
       <Icon idth="24" height="24" viewBox="0 0 24 24" fill="none">

@@ -3,12 +3,26 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Timestamp from 'react-timestamp';
 import request from 'request';
 import ReactMarkdown from 'react-markdown';
-import { colors, RadLogo } from 'styles';
+import { colors, RadLogo } from './styles';
 import Comment from './components/Comment';
 import Picker from './components/Picker';
 import Filter from './components/Filter';
+import { Machine } from 'jsradicle';
+
+var hackedMachine = (mid, machine) => {
+  var v = new Machine("dummy", mid);
+  const regex = /(.*\/v0\/machines)\/(\w+)\/.*/
+  if (typeof machine === "undefined") {
+    v.url = window.location.pathname.replace(regex, '$1/$2')
+  } else {
+    v.url = window.location.pathname.replace(regex, '$1/' + machine)
+  }
+  console.log(v.url)
+  return v
+}
 
 export default class App extends Component {
+
   state = {
     error: null,
     filter: {
@@ -16,34 +30,27 @@ export default class App extends Component {
       state: 'open',
     },
     issues: {},
-  };
+    machine: null,
+  }
 
   componentDidMount() {
     this.getIssues();
   }
 
   getIssues() {
-    request(
-      {
-        uri:
-          'http://replicate.machines.radicle.xyz/v0/machines/12D3KooWP7mz4WKrAwN9LXymnwntxMxj7sUYMCaWodX3EUDWmuVD/query',
-        method: 'POST',
-        json: { expression: '(list-issues)' },
-        headers: {
-          Accept: 'application/radicle-json',
-          'Content-Type': 'application/json',
-        },
-      },
-      (error, _, body) => {
-        if (error) {
-          this.setState({ error });
-        } else if (body.error) {
-          this.setState({ error: body.error });
-        } else {
-          this.setState({ issues: body.result });
-        }
-      }
-    );
+    this.state.machine.query("(list-issues)")
+      .then((result) => {
+        this.setState({ issues: result })
+      })
+      .catch((error) => {
+        this.setState({ error: error })
+      });
+  }
+
+
+  componentWillMount() {
+    this.setState({ machine: hackedMachine("monadic/radicle/issue")});
+
   }
 
   render() {
@@ -83,35 +90,33 @@ export default class App extends Component {
           </Controls>
         </Header>
         {Object.entries(issues)
-          .filter(([number, issue]) => issue.state === filter.state)
+          .filter(([number, issue]) => issue[":state"] === ":" + filter.state)
           .filter(([_, issue]) => {
             const search = filter.search.toLowerCase();
 
-            return (
-              issue.body.toLowerCase().includes(search) ||
-              issue['git-username'].toLowerCase().includes(search) ||
-              issue.number.toString().includes(search) ||
-              issue.title.toLowerCase().includes(search)
-            );
+            return issue[":body"].toLowerCase().includes(search) ||
+              issue[":git-username"].toLowerCase().includes(search) ||
+              issue[":number"].toString().includes(search) ||
+              issue[":title"].toLowerCase().includes(search);
           })
           // .sort((a, b) => a["created-at"] < b["created-at"])
           .map(([number, issue]) => (
             <IssueContainer key={number}>
               <TitleContainer>
                 <Title>
-                  #{number} - {issue.title}
+                  #{number} - {issue[":title"]}
                 </Title>
-                <State open={issue.state === 'open'}>{issue.state}</State>
+                <State open={issue[":state"] === ':open'}>{issue[":state"]}</State>
               </TitleContainer>
               <Meta>
-                opened <Timestamp time={issue['created-at']} /> by {issue['git-username']}
+                opened <Timestamp time={issue[':created-at']} /> by {issue[':git-username']}
               </Meta>
               <Divider />
               <ContentContainer>
                 <Body>
-                  <ReactMarkdown source={issue.body} />
+                  <ReactMarkdown source={issue[":body"]} />
                 </Body>
-                {issue.comments && issue.comments.map(comment => <Comment {...comment} />)}
+                {issue[":comments"] && issue[":comments"].map(comment => <Comment {...comment} />)}
               </ContentContainer>
             </IssueContainer>
           ))}
