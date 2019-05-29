@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import Timestamp from 'react-timestamp';
-import request from 'request';
 import ReactMarkdown from 'react-markdown';
 import { colors, RadLogo } from './styles';
 import Comment from './components/Comment';
@@ -17,7 +16,6 @@ var hackedMachine = (mid, machine) => {
   } else {
     v.url = window.location.pathname.replace(regex, '$1/' + machine)
   }
-  console.log(v.url)
   return v
 }
 
