@@ -6,7 +6,9 @@ import { colors, RadLogo } from './styles';
 import Comment from './components/Comment';
 import Picker from './components/Picker';
 import Filter from './components/Filter';
+import NewIssue from './components/NewIssue';
 import { Machine } from 'jsradicle';
+import Modal from 'react-modal';
 
 var hackedMachine = (mid, machine) => {
   var v = new Machine("dummy", mid);
@@ -19,16 +21,23 @@ var hackedMachine = (mid, machine) => {
   return v
 }
 
+Modal.setAppElement(document.getElementById('root'));
+
 export default class App extends Component {
 
-  state = {
-    error: null,
-    filter: {
-      search: '',
-      state: 'open',
-    },
-    issues: {},
-    machine: null,
+  constructor() {
+    super()
+    this.state = {
+      error: null,
+      filter: {
+        search: '',
+        state: 'open',
+      },
+      issues: {},
+      machine: hackedMachine("monadic/radicle/issue"),
+    }
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
@@ -45,11 +54,13 @@ export default class App extends Component {
       });
   }
 
-
-  componentWillMount() {
-    this.setState({ machine: hackedMachine("monadic/radicle/issue")});
-
+  openModal() {
+    this.setState({modalIsOpen: true});
   }
+  closeModal() {
+    this.setState({ modalIsOpen: false })
+  }
+
 
   render() {
     const { filter, issues } = this.state;
@@ -61,11 +72,12 @@ export default class App extends Component {
           <Controls>
             <RefreshButton
               onClick={e => {
-                this.getIssues();
+                this.openModal();
               }}
             >
               Refresh
             </RefreshButton>
+            <NewIssue machine={this.state.machine} />
             <Filter
               onChange={e => {
                 filter.search = e.target.value;
@@ -239,6 +251,7 @@ const RefreshButton = styled.button`
     opacity: 0.8;
   }
 `;
+
 
 const GlobalStyle = createGlobalStyle`
 /* reset.css */
